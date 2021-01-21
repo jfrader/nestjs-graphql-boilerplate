@@ -1,8 +1,8 @@
 import { FilterableField } from '@nestjs-query/query-graphql';
-import { ObjectType, GraphQLISODateTime, Field, Int } from '@nestjs/graphql';
+import { ObjectType, GraphQLISODateTime, Int } from '@nestjs/graphql';
 
 @ObjectType('User')
-export class UserDto {
+export class UserDTO {
   @FilterableField(() => Int)
   id!: number;
 
@@ -12,9 +12,9 @@ export class UserDto {
   @FilterableField()
   password!: string;
 
-  @Field(() => GraphQLISODateTime)
+  @FilterableField(() => GraphQLISODateTime)
   created!: Date;
 
-  @Field(() => GraphQLISODateTime)
+  @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
 }

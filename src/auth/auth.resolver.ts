@@ -5,8 +5,9 @@ import { UserDTO } from '../user/user.dto';
 import { CurrentUser } from './auth.interface';
 import { AuthenticatedUser } from './auth.interface';
 import { LoginInputDTO, LoginResponseDTO } from './auth.dto';
-import { UserEntity } from 'src/user/user.entity';
 import { JwtAuthGuard } from './auth.guard';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { UserEntity } from 'src/user/user.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -14,7 +15,10 @@ export class AuthResolver {
 
   @Mutation(() => LoginResponseDTO)
   async login(@Args('input') input: LoginInputDTO): Promise<LoginResponseDTO> {
-    const user = await this.authService.validateUser(input.email, input.password);
+    const user = await this.authService.validateUser(
+      input.email,
+      input.password,
+    );
     if (!user) {
       throw new UnauthorizedException();
     }

@@ -1,24 +1,12 @@
-import { NestjsQueryGraphQLModule } from '@nestjs-query/query-graphql';
 import { NestjsQueryTypeOrmModule } from '@nestjs-query/query-typeorm';
 import { Module } from '@nestjs/common';
-import { UserDTO } from './user.dto';
+import { CryptoModule } from 'src/crypto/crypto.module';
 import { UserEntity } from './user.entity';
+import { UserResolver } from './user.resolver';
 
 @Module({
-  imports: [
-    NestjsQueryGraphQLModule.forFeature({
-      // import the NestjsQueryTypeOrmModule to register the entity with typeorm
-      // and provide a QueryService
-      imports: [NestjsQueryTypeOrmModule.forFeature([UserEntity])],
-      // describe the resolvers you want to expose
-      resolvers: [{ DTOClass: UserDTO, EntityClass: UserEntity }],
-    }),
-  ],
-  exports: [
-    NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([UserEntity])],
-      resolvers: [{ DTOClass: UserDTO, EntityClass: UserEntity }],
-    }),
-  ]
+  providers: [UserResolver],
+  imports: [NestjsQueryTypeOrmModule.forFeature([UserEntity]), CryptoModule],
+  exports: [NestjsQueryTypeOrmModule.forFeature([UserEntity])],
 })
 export class UserModule {}

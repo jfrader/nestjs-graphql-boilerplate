@@ -1,4 +1,4 @@
-import { UserEntity } from "src/user/user.entity";
+import { UserEntity } from 'src/user/user.entity';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -14,7 +14,9 @@ export type UserContext = {
   };
 };
 
-export const CurrentUser = createParamDecorator((data: unknown, context: ExecutionContext) => {
-  const ctx = GqlExecutionContext.create(context);
-  return ctx.getContext<UserContext>().req.user;
-});
+export const CurrentUser = createParamDecorator(
+  (_data: unknown, context: ExecutionContext) => {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext<UserContext>().req.user;
+  },
+);

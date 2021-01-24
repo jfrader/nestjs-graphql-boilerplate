@@ -1,12 +1,13 @@
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { CRUDResolver } from '@nestjs-query/query-graphql';
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { CreateUserInputDTO, UserDTO } from './user.dto';
 import { UserEntity } from './user.entity';
-import * as crypto from 'crypto';
 import { CryptoService } from 'src/crypto/crypto.service';
+import { AllowedUserRoles } from 'src/auth/auth.interface';
+import { EUserRole } from './user.interface';
+import { UserRoleGuard } from './user.guard';
 
 @Resolver(() => UserDTO)
 export class UserResolver {
@@ -15,7 +16,8 @@ export class UserResolver {
     private cryptoService: CryptoService,
   ) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, UserRoleGuard)
+  @AllowedUserRoles(EUserRole.ADMIN)
   @Mutation(() => UserDTO)
   async createUser(@Args('input') input: CreateUserInputDTO): Promise<UserDTO> {
     if (!input.email || !input.password) {
@@ -26,10 +28,13 @@ export class UserResolver {
     const user = await this.service.createOne({
       email: input.email,
       password: hash,
+      role: EUserRole.USER,
     });
+
     if (!user) {
       throw new UnauthorizedException();
     }
+
     return user;
   }
 }

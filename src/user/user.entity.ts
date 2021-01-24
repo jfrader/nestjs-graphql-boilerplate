@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { EUserRole } from './user.interface';
 
 @Entity()
 export class UserEntity {
@@ -22,4 +23,7 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updated!: Date;
+
+  @Column()
+  role: EUserRole;
 }

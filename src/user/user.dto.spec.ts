@@ -1,7 +1,7 @@
-import { UserDto } from './user.dto';
+import { UserDTO } from './user.dto';
 
 describe('UserDto', () => {
   it('should be defined', () => {
-    expect(new UserDto()).toBeDefined();
+    expect(new UserDTO()).toBeDefined();
   });
 });

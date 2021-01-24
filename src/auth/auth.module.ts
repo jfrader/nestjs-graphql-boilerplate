@@ -3,10 +3,10 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
-import { jwtConstants } from './auth.constants';
 import { JwtStrategy } from './auth.jwt.strategy';
 import { AuthResolver } from './auth.resolver';
 import { CryptoModule } from 'src/crypto/crypto.module';
+import { AUTH_SECRET } from './auth.constants';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { CryptoModule } from 'src/crypto/crypto.module';
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: jwtConstants.secret,
+      secret: AUTH_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
   ],

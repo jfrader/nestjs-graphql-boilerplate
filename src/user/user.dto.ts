@@ -7,6 +7,7 @@ import {
   InputType,
 } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
+import { EUserRole } from './user.interface';
 
 @ObjectType('User')
 export class UserDTO {
@@ -24,6 +25,9 @@ export class UserDTO {
 
   @FilterableField(() => GraphQLISODateTime)
   updated!: Date;
+
+  @FilterableField()
+  role!: EUserRole;
 }
 
 @InputType()

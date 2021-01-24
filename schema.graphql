@@ -8,6 +8,7 @@ type User {
   password: String!
   created: DateTime!
   updated: DateTime!
+  role: String!
 }
 
 """

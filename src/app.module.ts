@@ -5,8 +5,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { UserRoleGuard } from './user/user.guard';
-import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -21,6 +19,10 @@ import { APP_GUARD } from '@nestjs/core';
     GraphQLModule.forRoot({
       // set to true to automatically generate schema
       autoSchemaFile: './schema.graphql',
+      cors: {
+        credentials: true,
+        origin: true,
+      },
       context: ({ req }: { req: { headers: Record<string, string> } }) => ({
         ...req,
       }),

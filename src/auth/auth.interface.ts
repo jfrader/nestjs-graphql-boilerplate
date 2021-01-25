@@ -4,8 +4,10 @@ import {
   ExecutionContext,
   SetMetadata,
 } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
 import { EUserRole } from 'src/user/user.interface';
+
+import { Response } from 'express';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 export type AuthenticatedUser = Pick<UserEntity, 'id' | 'email' | 'role'>;
 export type JwtPayload = {
@@ -29,3 +31,15 @@ export const CurrentUser = createParamDecorator(
 
 export const AllowedUserRoles = (...roles: EUserRole[]) =>
   SetMetadata('roles', roles);
+
+export const ResGql = createParamDecorator(
+  (_data: unknown, context: ExecutionContext): Response =>
+    GqlExecutionContext.create(context).getContext().res,
+);
+
+export const GqlUser = createParamDecorator(
+  (_data: unknown, context: ExecutionContext): UserEntity => {
+    const ctx = GqlExecutionContext.create(context).getContext();
+    return ctx.req && ctx.req.user;
+  },
+);

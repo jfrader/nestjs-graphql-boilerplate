@@ -1,5 +1,5 @@
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDTO } from '../user/user.dto';
 import { CurrentUser, ResGql } from './auth.interface';
@@ -23,12 +23,9 @@ export class AuthResolver {
       input.email,
       input.password,
     );
-    if (!user) {
-      throw new UnauthorizedException();
-    }
     const response = await this.authService.login(user);
 
-    const cookie = `Authentication=${response.accessToken}; HttpOnly; Path=/; Max-Age=280000`;
+    const cookie = `Authentication=${response.accessToken}; HttpOnly; Path=/`;
     res.setHeader('Set-Cookie', cookie);
 
     return response;

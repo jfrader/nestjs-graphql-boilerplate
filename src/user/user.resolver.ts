@@ -1,5 +1,11 @@
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { CreateUserInputDTO, UserDTO } from './user.dto';
@@ -21,20 +27,33 @@ export class UserResolver {
   @Mutation(() => UserDTO)
   async createUser(@Args('input') input: CreateUserInputDTO): Promise<UserDTO> {
     if (!input.email || !input.password) {
-      throw new Error('Fields cannot be empty');
+      throw new BadRequestException('Fields cannot be empty');
     }
-    const hash = await this.cryptoService.sha256(input.password);
 
-    const user = await this.service.createOne({
-      email: input.email,
-      password: hash,
-      role: EUserRole.USER,
+    const exists = await this.service.query({
+      filter: { email: { eq: input.email } },
+      paging: { limit: 1 },
     });
 
-    if (!user) {
-      throw new UnauthorizedException();
+    if (exists.length) {
+      throw new BadRequestException('Email already in use!');
     }
 
-    return user;
+    try {
+      const hash = await this.cryptoService.sha256(input.password);
+      const user = await this.service.createOne({
+        email: input.email,
+        password: hash,
+        role: EUserRole.USER,
+      });
+
+      if (!user) {
+        throw new Error('Error inesperado');
+      }
+
+      return user;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

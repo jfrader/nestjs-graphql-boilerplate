@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectQueryService, QueryService } from '@nestjs-query/core';
 import { UserEntity } from '../user/user.entity';
 import { AuthenticatedUser, JwtPayload } from './auth.interface';
 import { LoginResponseDTO } from './auth.dto';
 import { UserDTO } from 'src/user/user.dto';
-
 import { CryptoService } from 'src/crypto/crypto.service';
+import { AuthenticationError } from 'apollo-server-express';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,17 +21,21 @@ export class AuthService {
     email: string,
     pass: string,
   ): Promise<AuthenticatedUser | null> {
-    const [user] = await this.usersService.query({
-      filter: { email: { eq: email } },
-      paging: { limit: 1 },
-    });
+    try {
+      const [user] = await this.usersService.query({
+        filter: { email: { eq: email } },
+        paging: { limit: 1 },
+      });
 
-    const hash = await this.cryptoService.sha256(pass);
+      const hash = await this.cryptoService.sha256(pass);
 
-    if (user && user.password === hash) {
-      return user;
+      if (user && user.password === hash) {
+        return user;
+      }
+      throw new AuthenticationError('Usuario y/o contraseña no coinciden');
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return null;
   }
 
   async currentUser(authUser: AuthenticatedUser): Promise<UserDTO> {
@@ -38,7 +43,9 @@ export class AuthService {
       const user = await this.usersService.getById(authUser.id);
       return user;
     } catch (e) {
-      throw new UnauthorizedException();
+      throw new AuthenticationError(
+        'Usted no está autorizado, por favor inicie sesión.',
+      );
     }
   }
 

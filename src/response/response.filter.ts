@@ -16,18 +16,12 @@ export class ResponseExceptionFilter implements ExceptionFilter {
   async catch(e: TranslatedResponseException, host: ArgumentsHost) {
     const gqlHost = GqlArgumentsHost.create(host);
     const context = gqlHost.getContext();
-    const lang = context.req.headers[I18N_HEADER_KEY];
-    if (lang) {
-      const options = { lang };
-      if (e instanceof TranslatedResponseException) {
-        throw new ApolloError(
-          await this.i18n.translate(e.message, options),
-          e.getStatus().toString(),
-        );
-      }
+    const lang = context.req.headers[I18N_HEADER_KEY] || 'en';
+    const options = { lang };
+    if (e instanceof TranslatedResponseException) {
       throw new ApolloError(
-        await this.i18n.translate('errors.SERVER_INTERNAL_ERROR', options),
-        HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+        await this.i18n.translate(e.message, options),
+        e.getStatus().toString(),
       );
     }
     throw new ApolloError(

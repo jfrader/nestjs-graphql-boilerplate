@@ -1,12 +1,12 @@
-import { NestFactory, REQUEST } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ResponseExceptionFilter } from './response/response.filter';
 import { I18nService } from 'nestjs-i18n';
-import { Inject } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -14,10 +14,13 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
     credentials: true,
   });
+
   app.useGlobalFilters(
     new ResponseExceptionFilter(app.get<I18nService>(I18nService)),
   );
+
   app.use(cookieParser());
+
   await app.listen(3001);
 }
 

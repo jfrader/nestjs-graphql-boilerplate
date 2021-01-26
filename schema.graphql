@@ -16,12 +16,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type ResponseUser {
-  data: User
-  message: String!
-  success: Boolean!
-}
-
 type LoginResponse {
   accessToken: String!
 }
@@ -32,7 +26,7 @@ type Query {
 
 type Mutation {
   login(input: LoginInputDTO!): LoginResponse!
-  createUser(input: CreateUserInputDTO!): ResponseUser!
+  createUser(input: CreateUserInputDTO!): User!
 }
 
 input LoginInputDTO {

@@ -2,7 +2,7 @@ import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { HttpStatus, UseGuards } from '@nestjs/common';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { CreateUserInputDTO, ResponseUserDTO, UserDTO } from './user.dto';
+import { CreateUserInputDTO, UserDTO } from './user.dto';
 import { UserEntity } from './user.entity';
 import { CryptoService } from 'src/crypto/crypto.service';
 import { AllowedUserRoles } from 'src/auth/auth.interface';
@@ -19,10 +19,8 @@ export class UserResolver {
 
   @UseGuards(JwtAuthGuard, UserRoleGuard)
   @AllowedUserRoles(EUserRole.ADMIN)
-  @Mutation(() => ResponseUserDTO)
-  async createUser(
-    @Args('input') input: CreateUserInputDTO,
-  ): Promise<ResponseUserDTO> {
+  @Mutation(() => UserDTO)
+  async createUser(@Args('input') input: CreateUserInputDTO): Promise<UserDTO> {
     if (!input.email || !input.password) {
       throw new TranslatedResponseException(
         'errors.NO_EMPTY_FIELDS',
@@ -49,15 +47,10 @@ export class UserResolver {
         password: hash,
         role: EUserRole.USER,
       });
-
       if (!user) {
         throw new TranslatedResponseException();
       }
-
-      return {
-        message: 'Usuario creado correctamente',
-        data: user,
-      };
+      return user;
     } catch (e) {
       console.error(e);
       throw new TranslatedResponseException();

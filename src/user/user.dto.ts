@@ -7,6 +7,7 @@ import {
   InputType,
 } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
+import { ResponseDTO } from 'src/response/response.dto';
 import { EUserRole } from './user.interface';
 
 @ObjectType('User')
@@ -29,6 +30,9 @@ export class UserDTO {
   @FilterableField()
   role!: EUserRole;
 }
+
+@ObjectType('ResponseUser')
+export class ResponseUserDTO extends ResponseDTO(UserDTO) {}
 
 @InputType()
 export class CreateUserInputDTO {

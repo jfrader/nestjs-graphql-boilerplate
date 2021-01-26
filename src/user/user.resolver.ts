@@ -1,19 +1,14 @@
 import { QueryService, InjectQueryService } from '@nestjs-query/core';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+import { HttpStatus, UseGuards } from '@nestjs/common';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { CreateUserInputDTO, UserDTO } from './user.dto';
+import { CreateUserInputDTO, ResponseUserDTO, UserDTO } from './user.dto';
 import { UserEntity } from './user.entity';
 import { CryptoService } from 'src/crypto/crypto.service';
 import { AllowedUserRoles } from 'src/auth/auth.interface';
 import { EUserRole } from './user.interface';
 import { UserRoleGuard } from './user.guard';
+import { TranslatedResponseException } from 'src/response/response.exception';
 
 @Resolver(() => UserDTO)
 export class UserResolver {
@@ -24,10 +19,15 @@ export class UserResolver {
 
   @UseGuards(JwtAuthGuard, UserRoleGuard)
   @AllowedUserRoles(EUserRole.ADMIN)
-  @Mutation(() => UserDTO)
-  async createUser(@Args('input') input: CreateUserInputDTO): Promise<UserDTO> {
+  @Mutation(() => ResponseUserDTO)
+  async createUser(
+    @Args('input') input: CreateUserInputDTO,
+  ): Promise<ResponseUserDTO> {
     if (!input.email || !input.password) {
-      throw new BadRequestException('Fields cannot be empty');
+      throw new TranslatedResponseException(
+        'errors.NO_EMPTY_FIELDS',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const exists = await this.service.query({
@@ -36,7 +36,10 @@ export class UserResolver {
     });
 
     if (exists.length) {
-      throw new BadRequestException('Email already in use!');
+      throw new TranslatedResponseException(
+        'errors.EMAIL_ALREADY_USED',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     try {
@@ -48,12 +51,16 @@ export class UserResolver {
       });
 
       if (!user) {
-        throw new Error('Error inesperado');
+        throw new TranslatedResponseException();
       }
 
-      return user;
+      return {
+        message: 'Usuario creado correctamente',
+        data: user,
+      };
     } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      console.error(e);
+      throw new TranslatedResponseException();
     }
   }
 }

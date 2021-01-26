@@ -1,0 +1,7 @@
+{
+  "UNAUTHORIZED": "Acceso restringido, por favor inicie sesion",
+  "AUTHENTICATION_FAILED": "Email o contraseña no coinciden",
+  "SERVER_INTERNAL_ERROR": "Lo sentimos, hubo un error inesperado. Por favor intente nuevamente.",
+  "NO_EMPTY_FIELDS": "Los campos no pueden estar vacios.",
+  "EMAIL_ALREADY_USED": "El email ya esta en uso."
+}

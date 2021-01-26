@@ -1,0 +1,7 @@
+{
+  "UNAUTHORIZED": "Unauthorized, please login to continue.",
+  "AUTHENTICATION_FAILED": "Email or password don't match",
+  "SERVER_INTERNAL_ERROR": "We're sorry, an unexpected error ocurred, please try again.",
+  "NO_EMPTY_FIELDS": "Fields cannot be empty",
+  "EMAIL_ALREADY_USED": "Email is already used by another user."
+}

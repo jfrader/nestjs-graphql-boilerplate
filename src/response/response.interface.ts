@@ -1,5 +1,5 @@
-export interface MutationResponseBase {
+export interface IResponse<T> {
   success: boolean;
+  message: string;
+  data: T;
 }
-
-export type MutationResponse<DTO> = DTO & MutationResponseBase;

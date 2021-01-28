@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { UserDTO } from '../user/user.dto';
 import { CurrentUser, ResGql } from './auth.interface';
 import { AuthenticatedUser } from './auth.interface';
-import { LoginInputDTO, LoginResponseDTO } from './auth.dto';
+import { LoginInputDTO, LoginResponseDTO, LogoutResponseDTO } from './auth.dto';
 import { JwtAuthGuard } from './auth.guard';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserEntity } from 'src/user/user.entity';
@@ -23,12 +23,19 @@ export class AuthResolver {
       input.email,
       input.password,
     );
-    const response = await this.authService.login(user);
+    const node = await this.authService.login(user);
 
-    const cookie = `Authentication=${response.accessToken}; HttpOnly; Path=/`;
+    const cookie = `Authentication=${node.accessToken}; HttpOnly; Path=/`;
     res.setHeader('Set-Cookie', cookie);
 
-    return response;
+    return { success: true, message: 'You have been logged in!', node };
+  }
+
+  @Mutation(() => LogoutResponseDTO)
+  async logout(@ResGql() res: Response): Promise<LogoutResponseDTO> {
+    const cookie = `Authentication=; HttpOnly; Path=/`;
+    res.setHeader('Set-Cookie', cookie);
+    return { success: true, message: 'You have been logged out successfully' };
   }
 
   @UseGuards(JwtAuthGuard)

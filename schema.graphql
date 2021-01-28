@@ -16,8 +16,25 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type LoginResponse {
+type UserResponse {
+  node: User
+  message: String!
+  success: Boolean!
+}
+
+type Login {
   accessToken: String!
+}
+
+type LoginResponse {
+  node: Login
+  message: String!
+  success: Boolean!
+}
+
+type LogoutResponse {
+  message: String!
+  success: Boolean!
 }
 
 type Query {
@@ -26,7 +43,8 @@ type Query {
 
 type Mutation {
   login(input: LoginInputDTO!): LoginResponse!
-  createUser(input: CreateUserInputDTO!): User!
+  logout: LogoutResponse!
+  createUser(input: CreateUserInputDTO!): UserResponse!
 }
 
 input LoginInputDTO {

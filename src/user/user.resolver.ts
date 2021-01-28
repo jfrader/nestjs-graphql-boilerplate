@@ -2,7 +2,7 @@ import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { HttpStatus, UseGuards } from '@nestjs/common';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { CreateUserInputDTO, UserDTO } from './user.dto';
+import { CreateUserInputDTO, UserResponseDTO } from './user.dto';
 import { UserEntity } from './user.entity';
 import { CryptoService } from 'src/crypto/crypto.service';
 import { AllowedUserRoles } from 'src/auth/auth.interface';
@@ -10,7 +10,7 @@ import { EUserRole } from './user.interface';
 import { UserRoleGuard } from './user.guard';
 import { TranslatedResponseException } from 'src/response/response.exception';
 
-@Resolver(() => UserDTO)
+@Resolver(() => UserResponseDTO)
 export class UserResolver {
   constructor(
     @InjectQueryService(UserEntity) readonly service: QueryService<UserEntity>,
@@ -19,8 +19,10 @@ export class UserResolver {
 
   @UseGuards(JwtAuthGuard, UserRoleGuard)
   @AllowedUserRoles(EUserRole.ADMIN)
-  @Mutation(() => UserDTO)
-  async createUser(@Args('input') input: CreateUserInputDTO): Promise<UserDTO> {
+  @Mutation(() => UserResponseDTO)
+  async createUser(
+    @Args('input') input: CreateUserInputDTO,
+  ): Promise<UserResponseDTO> {
     if (!input.email || !input.password) {
       throw new TranslatedResponseException(
         'errors.NO_EMPTY_FIELDS',
@@ -50,7 +52,11 @@ export class UserResolver {
       if (!user) {
         throw new TranslatedResponseException();
       }
-      return user;
+      return {
+        success: true,
+        message: 'User has been created successfully',
+        node: user,
+      };
     } catch (e) {
       console.error(e);
       throw new TranslatedResponseException();

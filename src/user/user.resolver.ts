@@ -9,12 +9,14 @@ import { AllowedUserRoles } from 'src/auth/auth.interface';
 import { EUserRole } from './user.interface';
 import { UserRoleGuard } from './user.guard';
 import { TranslatedResponseException } from 'src/response/response.exception';
+import { I18nService } from 'nestjs-i18n';
 
 @Resolver(() => UserResponseDTO)
 export class UserResolver {
   constructor(
     @InjectQueryService(UserEntity) readonly service: QueryService<UserEntity>,
     private cryptoService: CryptoService,
+    private i18n: I18nService,
   ) {}
 
   @UseGuards(JwtAuthGuard, UserRoleGuard)
@@ -54,7 +56,7 @@ export class UserResolver {
       }
       return {
         success: true,
-        message: 'User has been created successfully',
+        message: this.i18n.t('user.USER_CREATED'),
         node: user,
       };
     } catch (e) {

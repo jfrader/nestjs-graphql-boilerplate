@@ -9,10 +9,11 @@ import { JwtAuthGuard } from './auth.guard';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserEntity } from 'src/user/user.entity';
 import { Response } from 'express';
+import { I18nService } from 'nestjs-i18n';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private i18n: I18nService) {}
 
   @Mutation(() => LoginResponseDTO)
   async login(
@@ -28,14 +29,14 @@ export class AuthResolver {
     const cookie = `Authentication=${node.accessToken}; HttpOnly; Path=/`;
     res.setHeader('Set-Cookie', cookie);
 
-    return { success: true, message: 'You have been logged in!', node };
+    return { success: true, message: this.i18n.t('auth.LOGGED_IN'), node };
   }
 
   @Mutation(() => LogoutResponseDTO)
   async logout(@ResGql() res: Response): Promise<LogoutResponseDTO> {
     const cookie = `Authentication=; HttpOnly; Path=/`;
     res.setHeader('Set-Cookie', cookie);
-    return { success: true, message: 'You have been logged out successfully' };
+    return { success: true, message: this.i18n.t('auth.LOGGED_OUT') };
   }
 
   @UseGuards(JwtAuthGuard)

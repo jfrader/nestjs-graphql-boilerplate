@@ -1,0 +1,14 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "root",
+  "database": "pablitoclavounclavito",
+  "entities": ["dist/**/*.entity.js"],
+  "synchronize": false,
+  "migrations": ["dist/migrations/*.js"],
+  "migrationsTableName": "penprop_migration_table",
+  "cli": {
+    "migrationsDir": "dist/migrations"
+  }
+}

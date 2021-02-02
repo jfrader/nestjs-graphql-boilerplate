@@ -2,7 +2,7 @@ import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { HttpStatus, UseGuards } from '@nestjs/common';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { CreateUserInputDTO, UserResponseDTO } from './user.dto';
+import { CreateUserInputDTO, UserDTO, UserResponseDTO } from './user.dto';
 import { UserEntity } from './user.entity';
 import { CryptoService } from 'src/crypto/crypto.service';
 import { AllowedUserRoles } from 'src/auth/auth.interface';
@@ -10,14 +10,17 @@ import { EUserRole } from './user.interface';
 import { UserRoleGuard } from './user.guard';
 import { TranslatedResponseException } from 'src/response/response.exception';
 import { I18nService } from 'nestjs-i18n';
+import { ReadResolver } from '@nestjs-query/query-graphql';
 
-@Resolver(() => UserResponseDTO)
-export class UserResolver {
+@Resolver()
+export class UserResolver extends ReadResolver(UserDTO) {
   constructor(
     @InjectQueryService(UserEntity) readonly service: QueryService<UserEntity>,
     private cryptoService: CryptoService,
     private i18n: I18nService,
-  ) {}
+  ) {
+    super(service);
+  }
 
   @UseGuards(JwtAuthGuard, UserRoleGuard)
   @AllowedUserRoles(EUserRole.ADMIN)

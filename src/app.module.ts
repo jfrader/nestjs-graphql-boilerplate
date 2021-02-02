@@ -16,7 +16,7 @@ import { I18N_HEADER_KEY } from './app.constants';
       fallbackLanguage: 'es',
       parser: I18nJsonParser,
       parserOptions: {
-        path: path.join(__dirname, 'i18n/'),
+        path: path.join(__dirname, '/i18n/'),
       },
       resolvers: [new HeaderResolver([I18N_HEADER_KEY])],
     }),

@@ -13,7 +13,10 @@ import { I18nService } from 'nestjs-i18n';
 import { ReadResolver } from '@nestjs-query/query-graphql';
 
 @Resolver()
-export class UserResolver extends ReadResolver(UserDTO) {
+export class UserResolver extends ReadResolver(UserDTO, {
+  guards: [JwtAuthGuard, UserRoleGuard],
+  decorators: [AllowedUserRoles(EUserRole.ADMIN)],
+}) {
   constructor(
     @InjectQueryService(UserEntity) readonly service: QueryService<UserEntity>,
     private cryptoService: CryptoService,

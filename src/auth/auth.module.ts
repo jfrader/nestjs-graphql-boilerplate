@@ -6,7 +6,7 @@ import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './auth.jwt.strategy';
 import { AuthResolver } from './auth.resolver';
 import { CryptoModule } from 'src/crypto/crypto.module';
-import { AUTH_SECRET } from './auth.constants';
+import { AUTH_SECRET, TOKEN_MAX_AGE_STRING } from './auth.constants';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { AUTH_SECRET } from './auth.constants';
     PassportModule,
     JwtModule.register({
       secret: AUTH_SECRET,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: TOKEN_MAX_AGE_STRING },
     }),
   ],
   providers: [AuthService, AuthResolver, JwtStrategy],

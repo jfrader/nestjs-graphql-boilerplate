@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth.guard';
 import { UserEntity } from 'src/user/user.entity';
 import { Response } from 'express';
 import { I18nService } from 'nestjs-i18n';
+import { TOKEN_MAX_AGE } from './auth.constants';
 
 @Resolver()
 export class AuthResolver {
@@ -26,7 +27,7 @@ export class AuthResolver {
     );
     const node = await this.authService.login(user);
 
-    const cookie = `Authentication=${node.accessToken}; HttpOnly; Path=/`;
+    const cookie = `Authentication=${node.accessToken}; HttpOnly; Path=/; Max-Age=${TOKEN_MAX_AGE}`;
     res.setHeader('Set-Cookie', cookie);
 
     return { success: true, message: this.i18n.t('auth.LOGGED_IN'), node };
@@ -34,7 +35,7 @@ export class AuthResolver {
 
   @Mutation(() => LogoutResponseDTO)
   async logout(@ResGql() res: Response): Promise<LogoutResponseDTO> {
-    const cookie = `Authentication=; HttpOnly; Path=/`;
+    const cookie = `Authentication=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     res.setHeader('Set-Cookie', cookie);
     return { success: true, message: this.i18n.t('auth.LOGGED_OUT') };
   }

@@ -2,7 +2,7 @@ import { hash_sha256 } from 'src/crypto/crypto.helper';
 import { EUserRole } from 'src/user/user.interface';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-const email = 'admin@penprop.com';
+const email = 'admin@penprop.org';
 const password = hash_sha256('youshouldchangeme');
 const role = EUserRole.ADMIN;
 

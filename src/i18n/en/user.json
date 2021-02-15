@@ -1,3 +1,4 @@
 {
-  "USER_CREATED": "User has been created"
+  "USER_CREATED": "User has been created",
+  "USER_DELETED": "User has been deleted"
 }

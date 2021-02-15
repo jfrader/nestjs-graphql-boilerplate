@@ -7,7 +7,10 @@ import {
   InputType,
 } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
-import { MutationResponseDTO } from 'src/response/response.dto';
+import {
+  EmptyResponseDTO,
+  MutationResponseDTO,
+} from 'src/response/response.dto';
 import { EUserRole } from './user.interface';
 
 @ObjectType('User')
@@ -33,6 +36,9 @@ export class UserDTO {
 
 @ObjectType('UserResponse')
 export class UserResponseDTO extends MutationResponseDTO(UserDTO) {}
+
+@ObjectType('DeleteUserResponse')
+export class DeleteUserResponseDTO extends EmptyResponseDTO() {}
 
 @InputType()
 export class CreateUserInputDTO {

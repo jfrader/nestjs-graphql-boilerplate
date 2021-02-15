@@ -2,7 +2,12 @@ import { QueryService, InjectQueryService } from '@nestjs-query/core';
 import { HttpStatus, UseGuards } from '@nestjs/common';
 import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { CreateUserInputDTO, UserDTO, UserResponseDTO } from './user.dto';
+import {
+  CreateUserInputDTO,
+  DeleteUserResponseDTO,
+  UserDTO,
+  UserResponseDTO,
+} from './user.dto';
 import { UserEntity } from './user.entity';
 import { CryptoService } from 'src/crypto/crypto.service';
 import { AllowedUserRoles } from 'src/auth/auth.interface';
@@ -70,5 +75,25 @@ export class UserResolver extends ReadResolver(UserDTO, {
       console.error(e);
       throw new TranslatedResponseException();
     }
+  }
+
+  @UseGuards(JwtAuthGuard, UserRoleGuard)
+  @AllowedUserRoles(EUserRole.ADMIN)
+  @Mutation(() => DeleteUserResponseDTO)
+  async deleteUser(
+    @Args('id') id: string,
+    @I18nLang() lang: string,
+  ): Promise<DeleteUserResponseDTO> {
+    if (!id) {
+      throw new TranslatedResponseException(
+        'errors.NO_EMPTY_FIELDS',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.service.deleteOne(id);
+    return {
+      success: true,
+      message: this.i18n.t('user.USER_DELETED', { lang }),
+    };
   }
 }

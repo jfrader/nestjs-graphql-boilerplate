@@ -1,3 +1,4 @@
 {
-  "USER_CREATED": "Usuario creado correctamente"
+  "USER_CREATED": "Usuario creado correctamente",
+  "USER_DELETED": "Usuario eliminado correctamente"
 }

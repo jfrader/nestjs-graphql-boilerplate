@@ -22,6 +22,11 @@ type UserResponse {
   success: Boolean!
 }
 
+type DeleteUserResponse {
+  message: String!
+  success: Boolean!
+}
+
 type UserEdge {
   """The node containing the User"""
   node: User!
@@ -201,6 +206,7 @@ type Mutation {
   login(input: LoginInputDTO!): LoginResponse!
   logout: LogoutResponse!
   createUser(input: CreateUserInputDTO!): UserResponse!
+  deleteUser(id: String!): DeleteUserResponse!
 }
 
 input LoginInputDTO {

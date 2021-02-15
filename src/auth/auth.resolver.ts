@@ -9,7 +9,7 @@ import { JwtAuthGuard } from './auth.guard';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { UserEntity } from 'src/user/user.entity';
 import { Response } from 'express';
-import { I18nService } from 'nestjs-i18n';
+import { I18nLang, I18nService } from 'nestjs-i18n';
 import { TOKEN_MAX_AGE } from './auth.constants';
 
 @Resolver()
@@ -20,6 +20,7 @@ export class AuthResolver {
   async login(
     @Args('input') input: LoginInputDTO,
     @ResGql() res: Response,
+    @I18nLang() lang: string,
   ): Promise<LoginResponseDTO> {
     const user = await this.authService.validateUser(
       input.email,
@@ -30,14 +31,21 @@ export class AuthResolver {
     const cookie = `Authentication=${node.accessToken}; HttpOnly; Path=/; Max-Age=${TOKEN_MAX_AGE}`;
     res.setHeader('Set-Cookie', cookie);
 
-    return { success: true, message: this.i18n.t('auth.LOGGED_IN'), node };
+    return {
+      success: true,
+      message: this.i18n.t('auth.LOGGED_IN', { lang }),
+      node,
+    };
   }
 
   @Mutation(() => LogoutResponseDTO)
-  async logout(@ResGql() res: Response): Promise<LogoutResponseDTO> {
+  async logout(
+    @ResGql() res: Response,
+    @I18nLang() lang: string,
+  ): Promise<LogoutResponseDTO> {
     const cookie = `Authentication=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     res.setHeader('Set-Cookie', cookie);
-    return { success: true, message: this.i18n.t('auth.LOGGED_OUT') };
+    return { success: true, message: this.i18n.t('auth.LOGGED_OUT', { lang }) };
   }
 
   @UseGuards(JwtAuthGuard)

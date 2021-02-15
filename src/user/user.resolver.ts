@@ -9,7 +9,7 @@ import { AllowedUserRoles } from 'src/auth/auth.interface';
 import { EUserRole } from './user.interface';
 import { UserRoleGuard } from './user.guard';
 import { TranslatedResponseException } from 'src/response/response.exception';
-import { I18nService } from 'nestjs-i18n';
+import { I18nLang, I18nService } from 'nestjs-i18n';
 import { ReadResolver } from '@nestjs-query/query-graphql';
 
 @Resolver()
@@ -30,6 +30,7 @@ export class UserResolver extends ReadResolver(UserDTO, {
   @Mutation(() => UserResponseDTO)
   async createUser(
     @Args('input') input: CreateUserInputDTO,
+    @I18nLang() lang: string,
   ): Promise<UserResponseDTO> {
     if (!input.email || !input.password) {
       throw new TranslatedResponseException(
@@ -62,7 +63,7 @@ export class UserResolver extends ReadResolver(UserDTO, {
       }
       return {
         success: true,
-        message: this.i18n.t('user.USER_CREATED'),
+        message: this.i18n.t('user.USER_CREATED', { lang }),
         node: user,
       };
     } catch (e) {

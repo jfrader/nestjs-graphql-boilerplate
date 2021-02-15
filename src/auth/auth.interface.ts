@@ -33,8 +33,9 @@ export const AllowedUserRoles = (...roles: EUserRole[]) =>
   SetMetadata('roles', roles);
 
 export const ResGql = createParamDecorator(
-  (_data: unknown, context: ExecutionContext): Response =>
-    GqlExecutionContext.create(context).getContext().res,
+  (_data: unknown, context: ExecutionContext): Response => {
+    return GqlExecutionContext.create(context).getContext().req.res;
+  },
 );
 
 export const GqlUser = createParamDecorator(

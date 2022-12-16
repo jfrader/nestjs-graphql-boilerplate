@@ -31,6 +31,11 @@ import { I18N_HEADER_KEY } from './app.constants';
     GraphQLModule.forRoot({
       // set to true to automatically generate schema
       autoSchemaFile: './schema.graphql',
+      playground: {
+        settings: {
+          'request.credentials': 'include', // Otherwise cookies won't be sent
+        },
+      },
       cors: {
         credentials: true,
         origin: true,

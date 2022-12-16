@@ -26,6 +26,7 @@ export class AuthResolver {
       input.email,
       input.password,
     );
+
     const node = await this.authService.login(user);
 
     const cookie = `Authentication=${node.accessToken}; HttpOnly; Path=/; Max-Age=${TOKEN_MAX_AGE}`;
